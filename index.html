@@ -28,32 +28,6 @@
       :root {
         --default-font-mono: 'JetBrains Mono';
       }
-
-      .token.comment {
-        color: gray;
-        font-style: italic;
-      }
-
-      .token.keyword,
-      .token.tag {
-        color: #f43333;
-      }
-
-      .token.punctuation {
-        color: #c2c2c2;
-      }
-
-      .token.boolean {
-        color: #f6f66d;
-      }
-
-      .token.string {
-        color: #61f161;
-      }
-
-      .token.global {
-        color: #6baced;
-      }
     </style>
   </head>
   <body class="p-4">
@@ -69,70 +43,37 @@
         >
       </div>
       <div class="overflow-x-scroll bg-gray-900 text-neutral-50 radius-md border-1 border-gray-700">
-        <pre class="language-javascript min-w-fit p-5 text-sm">
-import { AnyCSS } from '@anyframe/css'
-import { wind } from '@anyframe/preset-tailwindcss'
+        <pre class="language-custom min-w-fit p-5 text-sm">
+// src/styles.js
+import AnyDom from '@nousantx/anyframe-dom'
  
-const css = new AnyCSS({/* configuration here */})
- 
-console.log(css.render("bg-red-500"))
+AnyDom.init({
+  config: {
+    preflight: true,
+    colorVariant: 'rgb',
+    alias: {
+      'font-mono': 'font-(family:{default-font-mono})'
+    },
+    components: {
+      '.token': {
+        '&.comment': 'italic text-neutral-400',
+        '&.punctuation': 'text-neutral-300',
+        '&.operator': 'text-red-300',
+        '&.tag, &.keyword': 'text-rose-400',
+        '&.string': 'text-lime-400',
+        '&.global': 'text-sky-400'
+      }
+    }
+  }
+})
+
 </pre
         >
       </div>
     </div>
 
-    <script src="./index.js"></script>
-    <script>
-      const elem = document.querySelectorAll('[class*="language-"]')
-
-      const languageMap = {
-        'language-css': presets.css,
-        'language-javascript': presets.javascript,
-        'language-html': presets.html
-      }
-
-      function processTokens(tokens) {
-        return tokens
-          .map(
-            line =>
-              '<span>' +
-              line
-                .map(
-                  token =>
-                    `<span class="token ${token.type}">${token.value
-                      .replace(/&/g, '&amp;')
-                      .replace(/</g, '&lt;')
-                      .replace(/>/g, '&gt;')
-                      .replace(/"/g, '&quot;')
-                      .replace(/'/g, '&#039;')
-                      .replace(/ /g, '&nbsp;')}</span>`
-                )
-                .join('') +
-              '</span>'
-          )
-          .join('\n') // Wrap lines properly
-      }
-
-      elem.forEach(e => {
-        const langClass = Object.keys(languageMap).find(cls => e.classList.contains(cls))
-        const langPreset = languageMap[langClass] || presets.javascript // Default to JavaScript
-
-        const tokens = new Tokenizer(langPreset).tokenize(
-          e.getAttribute('data-code') || e.textContent
-        )
-        e.innerHTML = processTokens(tokens)
-        console.log(e.innerHTML)
-      })
-
-      AnyDom.init({
-        config: {
-          preflight: true,
-          colorVariant: 'rgb',
-          alias: {
-            'font-mono': 'font-(family:{default-font-mono})'
-          }
-        }
-      })
-    </script>
+    <script src="./highlighter-preset.js"></script>
+    <script src="./highlighter.js"></script>
+    <script src="./styles.js"></script>
   </body>
 </html>
